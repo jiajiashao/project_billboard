@@ -1,0 +1,58 @@
+{
+  "version": "5.3.1",
+  "flags": {},
+  "shapes": [
+    {
+      "label": "billboard",
+      "points": [
+        [
+          939.0,
+          175.0
+        ],
+        [
+          1201.1112,
+          175.0
+        ],
+        [
+          1201.1112,
+          233.0
+        ],
+        [
+          939.0,
+          233.0
+        ]
+      ],
+      "group_id": 80,
+      "shape_type": "polygon",
+      "flags": {}
+    },
+    {
+      "label": "billboard",
+      "points": [
+        [
+          1221.0,
+          183.0
+        ],
+        [
+          1279.0,
+          183.0
+        ],
+        [
+          1279.0,
+          235.3936
+        ],
+        [
+          1221.0,
+          235.3936
+        ]
+      ],
+      "group_id": 81,
+      "shape_type": "polygon",
+      "flags": {}
+    }
+  ],
+  "imagePath": "frame_000615_jpg.rf.44b2b60dd225be9db4af424e3720d340.jpg",
+  "imageData": null,
+  "imageHeight": 720,
+  "imageWidth": 1280
+}

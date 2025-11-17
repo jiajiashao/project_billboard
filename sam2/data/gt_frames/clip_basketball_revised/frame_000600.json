@@ -1,0 +1,33 @@
+{
+  "imageWidth": 1280,
+  "imageHeight": 720,
+  "shapes": [
+    {
+      "label": "billboard",
+      "shape_type": "polygon",
+      "points": [
+        [
+          981.0,
+          207.0
+        ],
+        [
+          979.0,
+          254.0
+        ],
+        [
+          1255.0,
+          269.0
+        ],
+        [
+          1257.0,
+          224.0
+        ],
+        [
+          1255.0,
+          223.0
+        ]
+      ]
+    }
+  ],
+  "frameLabel": "billboard"
+}

@@ -1,0 +1,34 @@
+{
+  "version": "5.3.1",
+  "flags": {},
+  "shapes": [
+    {
+      "label": "billboard",
+      "points": [
+        [
+          979.0,
+          207.0
+        ],
+        [
+          1257.8890000000001,
+          207.0
+        ],
+        [
+          1257.8890000000001,
+          270.2952
+        ],
+        [
+          979.0,
+          270.2952
+        ]
+      ],
+      "group_id": 50,
+      "shape_type": "polygon",
+      "flags": {}
+    }
+  ],
+  "imagePath": "frame_000660_jpg.rf.13ed01e21232521aa7007d582c2ccf9f.jpg",
+  "imageData": null,
+  "imageHeight": 720,
+  "imageWidth": 1280
+}

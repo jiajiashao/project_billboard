@@ -1,0 +1,84 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+pip-wheel-metadata/
+share/python-wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# Virtual Environments
+venv/
+env/
+ENV/
+.venv/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+*.code-workspace
+
+# Jupyter Notebook
+.ipynb_checkpoints
+*.ipynb
+
+# Model files (large binary files)
+*.pt
+*.pth
+*.safetensors
+*.pkl
+*.h5
+*.ckpt
+*.weights
+
+# Output directories
+runs/
+output/
+*.log
+
+# Data files (uncomment if you don't want to track data)
+# *.mp4
+# *.jpg
+# *.png
+# *.json
+# *.csv
+
+# OS
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Temporary files
+*.tmp
+*.bak
+*.swp
+*.swo
+*~
+
+# Environment variables
+.env
+.env.local
+
+# Hugging Face cache
+.cache/
+huggingface/
+

@@ -1,0 +1,154 @@
+{
+  "version": "5.3.1",
+  "flags": {},
+  "shapes": [
+    {
+      "label": "billboard",
+      "points": [
+        [
+          449.0,
+          159.0
+        ],
+        [
+          1279.0,
+          159.0
+        ],
+        [
+          1279.0,
+          214.0
+        ],
+        [
+          449.0,
+          214.0
+        ]
+      ],
+      "group_id": 58,
+      "shape_type": "polygon",
+      "flags": {}
+    },
+    {
+      "label": "billboard",
+      "points": [
+        [
+          451.0,
+          160.0
+        ],
+        [
+          1279.0,
+          160.0
+        ],
+        [
+          1279.0,
+          216.0
+        ],
+        [
+          451.0,
+          216.0
+        ]
+      ],
+      "group_id": 59,
+      "shape_type": "polygon",
+      "flags": {}
+    },
+    {
+      "label": "billboard",
+      "points": [
+        [
+          141.0,
+          165.0
+        ],
+        [
+          308.0,
+          165.0
+        ],
+        [
+          308.0,
+          212.0
+        ],
+        [
+          141.0,
+          212.0
+        ]
+      ],
+      "group_id": 60,
+      "shape_type": "polygon",
+      "flags": {}
+    },
+    {
+      "label": "billboard",
+      "points": [
+        [
+          140.0,
+          164.0
+        ],
+        [
+          310.0,
+          164.0
+        ],
+        [
+          310.0,
+          215.0
+        ],
+        [
+          140.0,
+          215.0
+        ]
+      ],
+      "group_id": 61,
+      "shape_type": "polygon",
+      "flags": {}
+    },
+    {
+      "label": "billboard",
+      "points": [
+        [
+          344.0,
+          167.0
+        ],
+        [
+          425.0,
+          167.0
+        ],
+        [
+          425.0,
+          212.0
+        ],
+        [
+          344.0,
+          212.0
+        ]
+      ],
+      "group_id": 62,
+      "shape_type": "polygon",
+      "flags": {}
+    },
+    {
+      "label": "billboard",
+      "points": [
+        [
+          346.0,
+          169.0
+        ],
+        [
+          425.0,
+          169.0
+        ],
+        [
+          425.0,
+          214.0
+        ],
+        [
+          346.0,
+          214.0
+        ]
+      ],
+      "group_id": 63,
+      "shape_type": "polygon",
+      "flags": {}
+    }
+  ],
+  "imagePath": "frame_000135_jpg.rf.3c0d40879d00ec66b765576662c725d4.jpg",
+  "imageData": null,
+  "imageHeight": 720,
+  "imageWidth": 1280
+}

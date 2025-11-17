@@ -1,0 +1,106 @@
+{
+  "version": "5.3.1",
+  "flags": {},
+  "shapes": [
+    {
+      "label": "billboard",
+      "points": [
+        [
+          2.0,
+          156.0
+        ],
+        [
+          55.8889,
+          156.0
+        ],
+        [
+          55.8889,
+          203.749
+        ],
+        [
+          2.0,
+          203.749
+        ]
+      ],
+      "group_id": 109,
+      "shape_type": "polygon",
+      "flags": {}
+    },
+    {
+      "label": "billboard",
+      "points": [
+        [
+          90.0,
+          146.0
+        ],
+        [
+          543.3333,
+          146.0
+        ],
+        [
+          543.3333,
+          203.743
+        ],
+        [
+          90.0,
+          203.743
+        ]
+      ],
+      "group_id": 110,
+      "shape_type": "polygon",
+      "flags": {}
+    },
+    {
+      "label": "billboard",
+      "points": [
+        [
+          573.0,
+          144.0
+        ],
+        [
+          609.6667,
+          144.0
+        ],
+        [
+          609.6667,
+          188.4177
+        ],
+        [
+          573.0,
+          188.4177
+        ]
+      ],
+      "group_id": 111,
+      "shape_type": "polygon",
+      "flags": {}
+    },
+    {
+      "label": "billboard",
+      "points": [
+        [
+          637.0,
+          128.0
+        ],
+        [
+          1003.6667,
+          128.0
+        ],
+        [
+          1003.6667,
+          186.8534
+        ],
+        [
+          637.0,
+          186.8534
+        ]
+      ],
+      "group_id": 112,
+      "shape_type": "polygon",
+      "flags": {}
+    }
+  ],
+  "imagePath": "frame_000480_jpg.rf.4f3cf4a96bc784ef133c2bba6f8f934d.jpg",
+  "imageData": null,
+  "imageHeight": 720,
+  "imageWidth": 1280
+}

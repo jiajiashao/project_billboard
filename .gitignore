@@ -42,7 +42,9 @@ ENV/
 *.ipynb
 
 # Model files (large binary files)
+xmem/model/YOLO/best.pt
 *.pt
+
 *.pth
 *.safetensors
 *.pkl

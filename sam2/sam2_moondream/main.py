@@ -16,8 +16,8 @@ from autoprompt_moondream import MoondreamBoxPromptor, PROMPT_TERMS
 
 def parse_args() -> base.argparse.Namespace:
     parser = base.argparse.ArgumentParser(description="SAM-2 with Moondream auto-prompt (per-shot sessions, multi-object)")
-    parser.add_argument("--data-root", dest="data_root", default="D:\Billboard_Project - Copy\sam2\data")
-    parser.add_argument("--weights", default="D:\Billboard_Project - Copy\sam2\models/sam2.1-hiera-tiny")
+    parser.add_argument("--data-root", dest="data_root", default="D:\project_billboard\sam2\data")
+    parser.add_argument("--weights", default="D:\project_billboard\sam2\models\sam2.1-hiera-tiny")
     parser.add_argument("--runs-root", dest="runs_root", default="runs")
     parser.add_argument("--clips", nargs="*", help="Optional subset of clip IDs to process")
     parser.add_argument("--device", choices=["cpu", "cuda", "mps"], default=None)
@@ -328,6 +328,7 @@ def process_clip_moondream(
             except Exception:
                 pass
 
+    target_indices = sorted(frame_runtimes.keys())
     # Overlay
     kernel = cv2.getStructuringElement(cv2.MORPH_RECT, (3, 3))
     overlay_path = clip_dir / f"overlay_{clip_id}_{base.RUN_SPEC['run_id']}.mp4"
@@ -395,28 +396,55 @@ def process_clip_moondream(
     per_frame_path = clip_dir / f"per_frame_{clip_id}_{base.RUN_SPEC['run_id']}.csv"
     base.write_per_frame_csv(per_frame_path, frame_rows, ["clip_id","frame_no","iou","biou","area_px","centroid_x","centroid_y","centroid_shift_px","centroid_shift_norm","is_empty","runtime_ms","roi_w","roi_h"])
 
-    # Summary metrics
+    # Summary metrics (match OWL-ViT Fix-2 summary format)
     import numpy as _np
+
     def _nanp(vals):
         arr = _np.asarray(vals, dtype=float)
         return arr[~_np.isnan(arr)]
-    ious = _nanp([r["iou"] for r in frame_rows])
-    biou = _nanp([r["biou"] for r in frame_rows])
-    shifts = _nanp([r["centroid_shift_norm"] for r in frame_rows])
-    empty_pct = 100.0 * (sum(1 for r in frame_rows if int(r["is_empty"]) == 1) / float(max(1, len(frame_rows))))
-    iou_med = float(_np.median(ious)) if ious.size else float("nan")
-    biou_med = float(_np.median(biou)) if biou.size else float("nan")
-    jitter_med = float(_np.median(shifts)) if shifts.size else float("nan")
-    fps_measured = float(len(frame_runtimes)) / (sum(frame_runtimes.values()) / 1000.0) if frame_runtimes else float("nan")
+
+    ious = [row["iou"] for row in frame_rows]
+    biou_vals = [row["biou"] for row in frame_rows]
+    jitter_vals = [
+        val
+        for val in (row["centroid_shift_norm"] for row in frame_rows)
+        if isinstance(val, float) and not math.isnan(val)
+    ]
+    area_vals = [row["area_px"] for row in frame_rows]
+    empty_vals = [row["is_empty"] for row in frame_rows]
+
+    # Percentiles and CV using helpers from sam2_base
+    iou_p25, iou_med, iou_p75 = base.nan_percentiles(ious, [25, 50, 75])
+    biou_p25, biou_med, biou_p75 = base.nan_percentiles(biou_vals, [25, 50, 75])
+    jitter_med, jitter_p95 = base.nan_percentiles(jitter_vals, [50, 95]) if jitter_vals else (math.nan, math.nan)
+
+    area_mean = base.nan_mean(area_vals)
+    area_std = math.nan
+    if not math.isnan(area_mean):
+        arr = _np.array(area_vals, dtype=_np.float32)
+        area_std = float(_np.std(arr))
+    area_cv = math.nan if math.isnan(area_mean) or area_mean == 0 else (area_std / area_mean) * 100.0
+    empty_pct = (sum(empty_vals) / len(empty_vals) * 100.0) if empty_vals else math.nan
+
+    processed_count = len(target_indices)
+    total_time_s = sum(frame_runtimes.get(idx, 0.0) for idx in target_indices) / 1000.0
+    fps_measured = processed_count / total_time_s if total_time_s > 0 else 0.0
+    fps_theoretical = fps / stride
 
     summary = {
         "clip_id": clip_id,
         "iou_median": iou_med,
+        "iou_p25": iou_p25,
+        "iou_p75": iou_p75,
         "biou_median": biou_med,
+        "biou_p25": biou_p25,
+        "biou_p75": biou_p75,
         "jitter_norm_median_pct": jitter_med,
+        "jitter_norm_p95_pct": jitter_p95,
+        "area_cv_pct": area_cv,
         "empty_frames_pct": float(empty_pct),
         "proc_fps_measured": fps_measured,
-        "proc_fps_theoretical": float(fps),
+        "proc_fps_theoretical": float(fps_theoretical),
         "roi_w": tgt_w,
         "roi_h": tgt_h,
         "target_W": tgt_w,
@@ -424,11 +452,15 @@ def process_clip_moondream(
         "stride": stride,
     }
 
-    # Write summary CSV
+    # Write summary CSV with same header as OWL-ViT Fix-2
     fields = [
         "clip_id",
-        "iou_median","biou_median","jitter_norm_median_pct","empty_frames_pct",
-        "proc_fps_measured","proc_fps_theoretical","roi_w","roi_h","target_W","target_H","stride",
+        "iou_median","iou_p25","iou_p75",
+        "biou_median","biou_p25","biou_p75",
+        "jitter_norm_median_pct","jitter_norm_p95_pct",
+        "area_cv_pct","empty_frames_pct",
+        "proc_fps_measured","proc_fps_theoretical",
+        "roi_w","roi_h","target_W","target_H","stride",
     ]
     summary_path = clip_dir / f"summary_{base.RUN_SPEC['run_id']}.csv"
     with summary_path.open("w", newline="") as f:
@@ -570,5 +602,6 @@ if __name__ == "__main__":
     base.parse_args = parse_args  # type: ignore[attr-defined]
     base.select_device = select_device  # type: ignore[attr-defined]
     base.main()
+
 
 

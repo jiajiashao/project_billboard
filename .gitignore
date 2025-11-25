@@ -52,6 +52,7 @@ ENV/
 # Output directories
 runs/
 outputs/
+work/
 *.log
 
 # Data files (uncomment if you don't want to track data)

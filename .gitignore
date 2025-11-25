@@ -46,11 +46,12 @@ ENV/
 *.pkl
 *.h5
 *.ckpt
-*.weights
+*.weight
+*.pth
 
 # Output directories
 runs/
-output/
+outputs/
 *.log
 
 # Data files (uncomment if you don't want to track data)

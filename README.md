@@ -51,7 +51,7 @@ Models / weights
   - `sam2/**/models/<sam2_weights>.pth`
 
 - **XMem checkpoint** (CUDA only)
-  - `xmem/model/xmem/saves/XMem-s012.pth`  ← from XMem releases
+  - Download the model from: [Google Drive](https://drive.google.com/drive/folders/1rPmJGm8JVt5ewECwvu5V3vtIOFyaUlKE?usp=sharing), and save it under `project_billboard/xmem/model/xmem/`  ← from XMem releases
 
 - **OWL‑ViT** (auto‑prompt)
   - Pulled automatically by HuggingFace on first run: `google/owlv2-base-patch16-ensemble`

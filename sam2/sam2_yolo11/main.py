@@ -18,10 +18,10 @@ from shot_detection import detect_shots
 def parse_args() -> argparse.Namespace:
     p = argparse.ArgumentParser(description="Segment billboards: YOLO seeding + SAM-2 propagation (v4-like outputs)")
     # IO
-    p.add_argument("--source", required=True, help="Video file or directory (recurses for common video types)")
+    p.add_argument("--data", required=True, help="Video file or directory (recurses for common video types)")
     p.add_argument("--out-dir", default="runs/yolo_sam2", help="Output root; per-clip folder gets timestamp suffix")
     # YOLO
-    p.add_argument("--yolo-model",default="..\sam2\models\YOLO\best.pt", required=True, help="Path to YOLO model weights")
+    p.add_argument("--yolo-model",default="./weights/best.pt", help="Path to YOLO model weights")
     p.add_argument("--yolo-conf", type=float, default=0.20, help="YOLO confidence threshold")
     p.add_argument("--yolo-max-objects", type=int, default=3, help="Max YOLO boxes per shot start")
     # SAM-2
@@ -392,10 +392,10 @@ def main() -> None:
     args = parse_args()
     out_root = Path(args.out_dir)
     ensure_dir(out_root)
-    src = Path(args.source)
+    src = Path(args.data)
     sources = list_sources(src if src.exists() else src)
     if not sources:
-        raise SystemExit(f"No sources found under {args.source}")
+        raise SystemExit(f"No sources found under {args.data}")
 
     results: List[Dict[str, object]] = []
     for p in sources:

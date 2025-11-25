@@ -42,7 +42,6 @@ ENV/
 *.ipynb
 
 
-*.pth
 *.safetensors
 *.pkl
 *.h5

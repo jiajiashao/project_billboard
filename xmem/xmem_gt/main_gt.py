@@ -62,7 +62,15 @@ def write_palettized_seed(src_png: Path, out_png: Path) -> None:
     pm.save(out_png, optimize=False)
 
 
-def run_xmem_eval(root: Path, clip: str, device: str = "cuda", size: int = 480, mem_every: int = 5, generic_path: Optional[Path] = None) -> Tuple[Path, Path]:
+def run_xmem_eval(
+    root: Path,
+    clip: str,
+    device: str = "cuda",
+    size: int = 480,
+    mem_every: int = 5,
+    generic_path: Optional[Path] = None,
+    xmem_root: Optional[Path] = None,
+) -> Tuple[Path, Path]:
     # XMem only supports CUDA; bail early with a clear message if CUDA is not available
     if str(device).lower() != "cuda":
         raise SystemExit("XMem eval currently supports only CUDA devices; run on a CUDA GPU box")
@@ -74,8 +82,8 @@ def run_xmem_eval(root: Path, clip: str, device: str = "cuda", size: int = 480, 
     if not has_cuda:
         raise SystemExit("XMem eval requires a CUDA-capable GPU (torch.cuda.is_available() is False)")
 
-    xmem_root = root / "model" / "xmem"
-    model_path = xmem_root / "saves" / "XMem-s012.pth"
+    resolved_xmem_root = (Path(xmem_root).expanduser() if xmem_root else (root / "model" / "xmem")).resolve()
+    model_path = resolved_xmem_root / "saves" / "XMem-s012.pth"
     if not model_path.exists():
         raise SystemExit(f"Model checkpoint not found: {model_path}")
 
@@ -83,9 +91,10 @@ def run_xmem_eval(root: Path, clip: str, device: str = "cuda", size: int = 480, 
     out_vendor = root / "outputs" / f"G_{clip}"
     ensure_dir(out_vendor)
 
+    eval_script = (resolved_xmem_root / "eval.py").resolve()
     cmd = [
         os.fspath(Path(os.sys.executable)),
-        os.fspath(xmem_root / "eval.py"),
+        os.fspath(eval_script),
         "--model", os.fspath(model_path),
         "--dataset", "G",
         "--generic_path", os.fspath(generic_path),
@@ -94,9 +103,8 @@ def run_xmem_eval(root: Path, clip: str, device: str = "cuda", size: int = 480, 
         "--output", os.fspath(out_vendor),
     ]
     print("CMD:", " ".join(cmd))
-    env = os.environ.copy()
     try:
-        subprocess.run(cmd, cwd=os.fspath(xmem_root), check=True)
+        subprocess.run(cmd, cwd=os.fspath(resolved_xmem_root), check=True)
     except subprocess.CalledProcessError as e:
         raise SystemExit(f"XMem eval failed with exit code {e.returncode}")
 
@@ -372,7 +380,7 @@ def write_summary(run_dir: Path, summaries: List[Dict[str, object]], run_id: str
 
 def main():
     ap = argparse.ArgumentParser(description="Run XMem locally with SAM-2-like outputs")
-    ap.add_argument('--root', default=r'D:\\Billboard_Project\\xmem', help='Project root containing data/, model/ etc')
+    ap.add_argument('--root', default="./../", help='Project root containing data/, model/ etc')
     ap.add_argument('--clip', default='clip_fast', help='Clip ID, e.g. clip_fast')
     ap.add_argument('--device', default='cuda', choices=['cuda','cpu'])
     ap.add_argument('--frames', type=int, default=-1, help='How many initial frames to prepare (-1 = all)')
@@ -381,9 +389,11 @@ def main():
     ap.add_argument('--run-id', default='xmem', help='Run ID used for output folder and filenames')
     ap.add_argument('--run-notes', action='store_true', help='Write simple RUN_NOTES.md')
     ap.add_argument('--run-only', action='store_true', help='Skip metrics')
+    ap.add_argument('--xmem-root', type=str, default=None, help='Override path to XMem repo (defaults to <root>/model/xmem)')
     args = ap.parse_args()
 
-    root = Path(args.root)
+    root = Path(args.root).expanduser().resolve()
+    xmem_root_override = Path(args.xmem_root).expanduser().resolve() if args.xmem_root else None
     clip = args.clip
 
     mp4 = root / 'data' / 'clips' / f'{clip}.mp4'
@@ -402,7 +412,13 @@ def main():
     write_palettized_seed(seed_src, anns_dir / '00000.png')
 
     print('Running XMem eval...')
-    vendor_root, vendor_clip_dir = run_xmem_eval(root, clip, device=args.device, generic_path=generic_base)
+    vendor_root, vendor_clip_dir = run_xmem_eval(
+        root,
+        clip,
+        device=args.device,
+        generic_path=generic_base,
+        xmem_root=xmem_root_override,
+    )
     print('Vendor out:', vendor_clip_dir)
 
     # Prepare run-specific output folder

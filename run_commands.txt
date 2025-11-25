@@ -1,19 +1,34 @@
 commands
 
-python /Users/jiashao/project_billboard/project_billboard/sam2/sam2_gt/main.py \
-  --data-root /Users/jiashao/project_billboard/project_billboard/sam2/data \
-  --clips clip_gentle
-  --device mps
+python sam2/sam2_gt/main.py \
+  --data-root sam2/data \
+  --clips clip_gentle \
+  --device cuda
 
 
-python /Users/jiashao/project_billboard/project_billboard/sam2/sam2_gt_shotdetector/main.py \
-  --data-root /Users/jiashao/project_billboard/project_billboard/sam2/data \
-  --clips clip_gentle
-  --device mps
+python sam2/sam2_gt_shotdetector/main.py \
+  --data-root sam2/data \
+  --clips clip_corner \
+  --device cuda
 
-python /Users/jiashao/project_billboard/project_billboard/sam2/sam2_owlvit/main.py --auto-prompt --prompts "perimeter billboard; sideline banner; LED advertisement perimeter board" --clips clip_occlusion
+python sam2/sam2_owlvit/main.py \
+  --data-root sam2/data \
+  --auto-prompt \
+  --prompts "perimeter billboard; sideline banner" \
+  --clips clip_corner \
+  --device cuda
 
-python /Users/jiashao/project_billboard/project_billboard/sam2/sam2_moondream/main.py --auto-prompt --prompts "perimeter billboard; sideline banner; LED advertisement perimeter board" --moondream-threshold 0.05 --clips clip_occlusion
+python sam2/sam2_moondream/main.py \
+  --data-root sam2/data \
+  --auto-prompt \
+  --prompts "perimeter billboard; sideline banner" \
+  --clips clip_corner \
+  --device cuda
+
+python sam2/sam2_yolo11/main.py \
+  --yolo-model sam2_yolo11/weights/best.pt
+  --source data/clips/clip_corner.mp4
+
 
 python sam2_yolo11/main.py \
   --yolo-model /Users/jiashao/project_billboard/project_billboard/sam2/sam2_yolo11/weights/best.pt \

@@ -24,3 +24,5 @@ accelerate
 polars
 
 ultralytics
+
+pexpect>4.3

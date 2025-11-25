@@ -1,5 +1,0 @@
-﻿main_file,output_directory,arguments,command_to_run,notes
-main.py,root/sam2/sam2_gt/runs,,python main.py --clips clip_gentle,
-main.py,root/sam2/sam2_moondream/runs,,"python main.py --auto-prompt --prompts ""perimeter billboard; sideline banner; LED advertisement perimeter board"" --moondream-threshold 0.1 --clips clip_occlusion",
-,,,"python main.py --auto-prompt --autoprompt-fallback none --owlvit-score-thr 0.15 --prompts ""perimeter billboard, sideline banner, LED advertisement perimeter board"" --clips clip_gentle",
-,,,"python main.py --yolo-model weights/best.pt --source ""D:\Billboard_Project - Copy\sam2\data\clips\clip_occlusion.mp4""",

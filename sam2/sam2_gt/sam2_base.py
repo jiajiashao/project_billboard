@@ -140,7 +140,7 @@ MASK_THRESHOLD = 0.5
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description="SAM-2 pilot runner for Fix-2")
     parser.add_argument("--data-root", dest="data_root", default="data")
-    parser.add_argument("--weights", default="models/sam2.1-hiera-tiny")
+    parser.add_argument("--weights", default="facebook/sam2.1-hiera-tiny")
     parser.add_argument("--runs-root", dest="runs_root", default="runs")
     parser.add_argument("--clips", nargs="*", help="Optional subset of clip IDs to process")
     parser.add_argument("--device", choices=["cpu", "mps"], default=None)

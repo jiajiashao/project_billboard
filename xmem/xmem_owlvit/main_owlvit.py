@@ -114,12 +114,12 @@ def _prompts_from_args(args) -> List[str]:
 
 def main():
     ap = argparse.ArgumentParser(description='XMem wrapper with OWL-ViT shot-start auto-prompting (v5-matched)')
-    ap.add_argument('--root', default=r'D:\\Billboard_Project\\xmem', help='XMem project root containing data/, model/, work/ etc')
-    ap.add_argument('--clip', default='clip_fast', help='Clip ID, e.g. clip_fast')
+    ap.add_argument('--root', default='/Users/jiashao/project_billboard/project_billboard/xmem', help='XMem project root containing data/, model/, work/ etc')
+    ap.add_argument('--clip', help='Clip ID, e.g. clip_fast')
     ap.add_argument('--device', default='cuda', choices=['cuda', 'cpu'])
     ap.add_argument('--width', type=int, default=None, help='Resize width for extracted frames (keeps aspect)')
     ap.add_argument('--stride', type=int, default=1, help='Stride to report in summary (>=1)')
-    ap.add_argument('--run-id', default='xmem_owlvit_v5match', help='Run ID used for output folder and filenames')
+    ap.add_argument('--run-id', help='Run ID used for output folder and filenames')
     ap.add_argument('--run-notes', action='store_true', help='Write simple RUN_NOTES.md')
     ap.add_argument('--run-only', action='store_true', help='Skip metrics')
 
@@ -137,10 +137,16 @@ def main():
     ap.add_argument('--seed-erosion', type=int, default=1)
     ap.add_argument('--bbox-pad', type=int, default=6)
     ap.add_argument('--owlvit-debug', action='store_true')
+    ap.add_argument('--skip-xmem', action='store_true', help='Skip XMem eval (for debugging seeds/boxes only)')
 
     args = ap.parse_args()
+    clip = args.clip
     ts = time.strftime('%Y%m%d_%H%M%S')
-    run_id = args.run_id + '_' + ts
+    run_id = f"clip_{clip}_{ts}"
+    runs_root = Path(args.root) / "outputs"
+    run_dir = runs_root / run_id
+    ensure_dir(run_dir)
+    run_folder = run_dir
 
     log_lines: List[str] = []
     def _log(msg: str) -> None:
@@ -180,9 +186,20 @@ def main():
         shot_bounds = [(0, total_frames)]
 
     promptor: Optional[OwlVitBoxPromptor] = None
+    promptor_error: Optional[str] = None
     if args.auto_prompt:
         prompts = _prompts_from_args(args)
+        # Pick device; if CUDA was requested but unavailable, fall back to CPU for OWL-ViT so we still get boxes.
         run_dev = args.owlvit_device or ('cuda' if args.device == 'cuda' else 'cpu')
+        if run_dev == 'cuda':
+            try:
+                import torch  # type: ignore
+                if not torch.cuda.is_available():
+                    run_dev = 'cpu'
+                    _log('OWL-ViT: requested cuda but torch.cuda.is_available() is False; falling back to CPU for prompts.')
+            except Exception:
+                run_dev = 'cpu'
+                _log('OWL-ViT: CUDA probe failed; falling back to CPU for prompts.')
         try:
             promptor = OwlVitBoxPromptor(
                 model_id=args.owlvit_model,
@@ -191,11 +208,11 @@ def main():
                 score_thr=float(args.owlvit_score_thr),
                 nms_iou=0.5,
             )
-        except Exception:
+        except Exception as e:
+            promptor_error = str(e)
             promptor = None
 
-    runs_root = root / 'outputs' / f'G_{clip}' / 'runs'
-    run_dir, run_folder = prepare_run_dir(runs_root, run_id)
+    # runs_root, run_dir, run_folder, run_id already set above
 
     header_lines = [
         f'OWLVIT device: {args.device}; model={getattr(args, "owlvit_model", "N/A")}; score_thr={getattr(args, "owlvit_score_thr", "N/A")} ',
@@ -205,7 +222,7 @@ def main():
     _log(f'  Device: {args.device}')
     _log(f'  Frames decoded: {len(frame_paths)} @ {fps:.2f} fps -> {W}x{H}')
 
-    rp_path = run_dir / f're_prompts_{clip}_{run_id}.csv'
+    rp_path = run_dir / f"re_prompts_clip_{clip}_{ts}.csv"
     rp_fields = ['shot_idx', 'start', 'end', 'obj_id', 'x0', 'y0', 'x1', 'y1', 'score', 'label', 'seed_type']
     with rp_path.open('w', newline='') as f:
         w = csv.DictWriter(f, fieldnames=rp_fields)
@@ -214,6 +231,11 @@ def main():
     masks_dst = run_dir / 'masks'
     ensure_dir(masks_dst)
 
+    if args.auto_prompt and promptor is None:
+        msg = f'OWL-ViT promptor failed to initialize; no boxes will be produced. Error: {promptor_error or "unknown"}'
+        _log(msg)
+
+    last_eval_error: Optional[str] = None
     for i, (s, e) in enumerate(shot_bounds, start=1):
         s = max(0, int(s)); e = min(total_frames, int(e))
         if s >= e:
@@ -349,6 +371,10 @@ def main():
             continue
 
         # Run vendor eval for this shot and stitch masks back into run_dir/masks
+        if args.skip_xmem:
+            _log(f'Skipping XMem for shot {i} (--skip-xmem).')
+            continue
+
         try:
             _, vendor_clip_dir = run_xmem_eval(root, clip, device=args.device, generic_path=shot_base)
             for p in sorted(vendor_clip_dir.glob('*.png')):
@@ -360,10 +386,20 @@ def main():
                 out = masks_dst / f'{global_idx:05d}.png'
                 shutil.copy2(p, out)
         except SystemExit as e:
+            last_eval_error = str(e)
             _log('XMem eval failed for shot ' + str(i) + ' -> ' + str(e))
             continue
 
-    write_overlay_video(frames_dir, masks_dst, run_dir / f'overlay_{clip}_{run_id}.mp4', fps=fps if fps > 0 else 10.0, alpha=0.35)
+    if args.skip_xmem:
+        _log('Skipping XMem eval; seeds and prompt CSV are written. No overlay/metrics.')
+        return
+
+    mask_files = sorted(masks_dst.glob('*.png'))
+    if not mask_files:
+        reason = last_eval_error or 'no masks were produced by XMem'
+        raise SystemExit(f"Aborting: no masks generated for {clip}. Last error: {reason}")
+
+    write_overlay_video(frames_dir, masks_dst, run_dir / f"overlay_clip_{clip}_{ts}.mp4", fps=fps if fps > 0 else 10.0, alpha=0.35)
 
     summaries: List[Dict[str, object]] = []
     if not args.run_only:
@@ -387,7 +423,7 @@ def main():
             pass
 
     try:
-        log_path = run_dir / f'pilot_{clip}_{run_id}.log'
+        log_path = run_dir / f"pilot_clip_{clip}_{ts}.log"
         with log_path.open('w', encoding='utf-8') as f:
             for ln in log_lines:
                 f.write(ln + '\n')

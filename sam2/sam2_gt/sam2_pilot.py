@@ -33,11 +33,11 @@ def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description="SAM-2 pilot runner")
     parser.add_argument("--clips", nargs="+", help="List of MP4 clips to process")
     parser.add_argument("--gt-root", "--gt_root", dest="gt_root", default="data/gt_frames")
-    parser.add_argument("--weights", default="models/sam2.1-hiera-tiny")
+    parser.add_argument("--weights", default="facebook/sam2.1-hiera-tiny")
     parser.add_argument("--target-width", "--target_width", dest="target_width", type=int, default=640)
     parser.add_argument("--stride", type=int, default=2)
     parser.add_argument("--roi-pad", "--roi_pad", dest="roi_pad", type=int, default=16)
-    parser.add_argument("--outdir", default="outputs/sam2_pilot")
+    parser.add_argument("--outdir", default="outputs/sam2_gt")
     parser.add_argument(
         "--max-frames",
         "--max_frames",

@@ -71,6 +71,10 @@ args = parser.parse_args()
 config = vars(args)
 config['enable_long_term'] = not config['disable_long_term']
 
+# Require CUDA upfront; the current eval path calls .cuda() on the network
+if not torch.cuda.is_available():
+    raise SystemExit('XMem eval requires a CUDA-capable GPU (torch.cuda.is_available() is False)')
+
 if args.output is None:
     args.output = f'../output/{args.dataset}_{args.split}'
     print(f'Output path not provided. Defaulting to {args.output}')
@@ -259,6 +263,5 @@ if not args.save_scores:
     elif is_davis and args.split == 'test':
         print('Making zip for DAVIS test-dev...')
         shutil.make_archive(args.output, 'zip', args.output)
-
 
 

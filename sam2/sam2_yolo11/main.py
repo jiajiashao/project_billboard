@@ -21,11 +21,11 @@ def parse_args() -> argparse.Namespace:
     p.add_argument("--source", required=True, help="Video file or directory (recurses for common video types)")
     p.add_argument("--out-dir", default="runs/yolo_sam2", help="Output root; per-clip folder gets timestamp suffix")
     # YOLO
-    p.add_argument("--yolo-model",default="D:\Billboard_Project - Copy\sam2\models\YOLO\best.pt", required=True, help="Path to YOLO model weights")
+    p.add_argument("--yolo-model",default="..\sam2\models\YOLO\best.pt", required=True, help="Path to YOLO model weights")
     p.add_argument("--yolo-conf", type=float, default=0.20, help="YOLO confidence threshold")
     p.add_argument("--yolo-max-objects", type=int, default=3, help="Max YOLO boxes per shot start")
     # SAM-2
-    p.add_argument("--sam2-weights", default="D:\Billboard_Project - Copy\sam2\models\sam2.1-hiera-tiny", help="HuggingFace weights for SAM-2 video")
+    p.add_argument("--sam2-weights", default="facebook/sam2.1-hiera-tiny", help="HuggingFace weights for SAM-2 video")
     p.add_argument("--input-width", type=int, default=1280, help="Target decode width (frames resized keeping aspect)")
     # Device/Perf
     p.add_argument("--device", choices=["cpu", "cuda", "mps"], default="cuda", help="Run device for both models")
@@ -33,7 +33,7 @@ def parse_args() -> argparse.Namespace:
     # Shots
     p.add_argument("--shot-mode", choices=["auto", "single"], default="auto", help="Detect shots or treat whole video as one shot")
     # GT root
-    p.add_argument("--gt-root", default="D:\Billboard_Project - Copy\sam2\data\gt_frames")
+    p.add_argument("--gt-root", default="..\sam2\data\gt_frames")
     return p.parse_args()
 
 

@@ -1,0 +1,41 @@
+commands
+
+python /Users/jiashao/project_billboard/project_billboard/sam2/sam2_gt/main.py \
+  --data-root /Users/jiashao/project_billboard/project_billboard/sam2/data \
+  --clips clip_gentle
+  --device mps
+
+
+python /Users/jiashao/project_billboard/project_billboard/sam2/sam2_gt_shotdetector/main.py \
+  --data-root /Users/jiashao/project_billboard/project_billboard/sam2/data \
+  --clips clip_gentle
+  --device mps
+
+python /Users/jiashao/project_billboard/project_billboard/sam2/sam2_owlvit/main.py --auto-prompt --prompts "perimeter billboard; sideline banner; LED advertisement perimeter board" --clips clip_occlusion
+
+python /Users/jiashao/project_billboard/project_billboard/sam2/sam2_moondream/main.py --auto-prompt --prompts "perimeter billboard; sideline banner; LED advertisement perimeter board" --moondream-threshold 0.05 --clips clip_occlusion
+
+python sam2_yolo11/main.py \
+  --yolo-model /Users/jiashao/project_billboard/project_billboard/sam2/sam2_yolo11/weights/best.pt \
+  --source data/clips/clip_occlusion.mp4
+
+python /Users/jiashao/project_billboard/project_billboard/xmem/xmem_gt/main_gt.py --root "/Users/jiashao/project_billboard/project_billboard/xmem" --device cuda --clip clip_gentle
+
+python /Users/jiashao/project_billboard/project_billboard/xmem/xmem_owlvit/main_owlvit.py --root "/Users/jiashao/project_billboard/project_billboard/xmem" --device cuda --clip clip_corner --shot-detect --auto-prompt --prompts "perimeter billboard; sideline banner" --owlvit-debug
+
+
+python /Users/jiashao/project_billboard/project_billboard/xmem/xmem_yolo11/main_yolo.py --device cuda --width 1280 --shot-detect --auto-prompt --yolo-model "/Users/jiashao/project_billboard/project_billboard/xmem/xmem_yolo11/weights/best.pt" --yolo-conf 0.05 --yolo-max-objects 2 --clip clip_glare
+
+  python /Users/jiashao/project_billboard/project_billboard/xmem/xmem_yolo11/main_yolo.py \
+    --root "/Users/jiashao/project_billboard/project_billboard/xmem" \
+    --device cpu \
+    --width 1280 \
+    --shot-detect \
+    --auto-prompt \
+    --yolo-model "/Users/jiashao/project_billboard/project_billboard/xmem/xmem_yolo11/weights/best.pt" \
+    --yolo-conf 0.05 \
+    --yolo-max-objects 2 \
+    --clip clip_glare 
+
+
+

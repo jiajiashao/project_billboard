@@ -116,13 +116,14 @@ def main():
 
     # YOLO auto-prompt
     ap.add_argument('--auto-prompt', action='store_true', help='Enable YOLO shot-start seeding')
-    ap.add_argument('--yolo-model', default=None, help='Path to YOLO weights (default: sam2/runs/detect/train7/weights/best.pt)')
+    ap.add_argument('--yolo-model', default=None, help='Path to YOLO weights (xmem_yolo11/weights/best.pt)')
     ap.add_argument('--yolo-conf', type=float, default=0.20, help='YOLO confidence threshold')
     ap.add_argument('--yolo-max-objects', type=int, default=3, help='Max YOLO boxes per shot start')
     ap.add_argument('--yolo-imgsz', type=int, default=None, help='Inference size for YOLO; defaults to --width or 1280')
     ap.add_argument('--autoprompt-fallback', choices=['gt', 'skip'], default='skip')
     ap.add_argument('--seed-erosion', type=int, default=1)
     ap.add_argument('--yolo-debug', action='store_true')
+    ap.add_argument('--skip-xmem', action='store_true', help='Skip XMem eval (for debugging seeds/boxes only)')
 
     args = ap.parse_args()
     ts = time.strftime('%Y%m%d_%H%M%S')
@@ -132,7 +133,7 @@ def main():
     clip = args.clip
 
     # Resolve YOLO weights to match SAM-2 script default
-    default_yolo_weights = SAM2_ROOT / 'runs' / 'detect' / 'train7' / 'weights' / 'best.pt'
+    default_yolo_weights = SAM2_ROOT / 'xmem_yolo11' / 'weights' / 'best.pt'
     resolved_yolo_weights = Path(args.yolo_model) if args.yolo_model else default_yolo_weights
     if not resolved_yolo_weights.is_file():
         raise SystemExit(f'YOLO weights not found: {resolved_yolo_weights}')
@@ -173,19 +174,32 @@ def main():
 
     # Build YOLO promptor
     promptor: Optional[YoloBoxPromptor] = None
+    promptor_error: Optional[str] = None
     yolo_class_names = None
     if args.auto_prompt:
         imgsz = args.yolo_imgsz if args.yolo_imgsz is not None else (args.width if args.width is not None else 1280)
-        promptor = YoloBoxPromptor(
-            model_path=os.fspath(resolved_yolo_weights),
-            device=('cuda' if args.device == 'cuda' else 'cpu'),
-            conf=float(args.yolo_conf),
-            imgsz=int(imgsz),
-        )
+        run_dev = 'cuda' if args.device == 'cuda' else 'cpu'
+        if run_dev == 'cuda':
+            try:
+                import torch  # type: ignore
+                if not torch.cuda.is_available():
+                    run_dev = 'cpu'
+            except Exception:
+                run_dev = 'cpu'
         try:
-            yolo_class_names = promptor.model.names
-        except Exception:
-            yolo_class_names = None
+            promptor = YoloBoxPromptor(
+                model_path=os.fspath(resolved_yolo_weights),
+                device=run_dev,
+                conf=float(args.yolo_conf),
+                imgsz=int(imgsz),
+            )
+            try:
+                yolo_class_names = promptor.model.names
+            except Exception:
+                yolo_class_names = None
+        except Exception as e:
+            promptor_error = str(e)
+            promptor = None
 
     # Prepare run-specific output folder
     runs_root = root / 'outputs' / f'G_{clip}' / 'runs'
@@ -198,6 +212,8 @@ def main():
     ]
     if yolo_class_names is not None:
         header_lines.append(f'YOLO classes: {yolo_class_names}')
+    if args.auto_prompt and promptor is None:
+        header_lines.append(f'YOLO promptor failed to initialize; no boxes will be produced. Error: {promptor_error or "unknown"}')
 
     # Run log setup
     log_path = run_dir / f'pilot_{clip}_{run_id}.log'
@@ -220,6 +236,7 @@ def main():
     masks_dst = run_dir / 'masks'
     ensure_dir(masks_dst)
 
+    last_eval_error: Optional[str] = None
     # Process each shot
     for i, (s, e) in enumerate(shot_bounds, start=1):
         s = max(0, int(s)); e = min(total_frames, int(e))
@@ -367,6 +384,10 @@ def main():
             continue
 
         # Run vendor eval for this shot and stitch masks back into run_dir/masks
+        if args.skip_xmem:
+            _log(f'Skipping XMem for shot {i} (--skip-xmem).')
+            continue
+
         try:
             _, vendor_clip_dir = run_xmem_eval(root, clip, device=args.device, generic_path=shot_base)
             # Copy vendor masks with global frame indices
@@ -379,8 +400,18 @@ def main():
                 out = masks_dst / f'{global_idx:05d}.png'
                 shutil.copy2(p, out)
         except SystemExit as e:
-            print('XMem eval failed for shot', i, '->', e)
+            last_eval_error = str(e)
+            _log(f'XMem eval failed for shot {i} -> {e}')
             continue
+
+    if args.skip_xmem:
+        _log('Skipping XMem eval; seeds and prompt CSV are written. No overlay/metrics.')
+        return
+
+    mask_files = sorted(masks_dst.glob('*.png'))
+    if not mask_files:
+        reason = last_eval_error or 'no masks were produced by XMem'
+        raise SystemExit(f"Aborting: no masks generated for {clip}. Last error: {reason}")
 
     # Write overlay video
     write_overlay_video(frames_dir, masks_dst, run_dir / f'overlay_{clip}_{run_id}.mp4', fps=fps if fps > 0 else 10.0, alpha=0.35)
@@ -423,6 +454,3 @@ def main():
 
 if __name__ == '__main__':
     main()
-
-
-

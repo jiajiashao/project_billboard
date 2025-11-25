@@ -14,8 +14,8 @@ import sam2_base as base
 def parse_args() -> base.argparse.Namespace:
     """CLI with CUDA enabled; mirrors Fix-2 defaults."""
     parser = base.argparse.ArgumentParser(description="SAM-2 pilot runner for Fix-2 (CUDA-enabled)")
-    parser.add_argument("--data-root", dest="data_root", default="D:\Billboard_Project - Copy\sam2\data")
-    parser.add_argument("--weights", default="D:\Billboard_Project - Copy\sam2\models\sam2.1-hiera-tiny")
+    parser.add_argument("--data-root", dest="data_root", default="..\sam2\data")
+    parser.add_argument("--weights", default="facebook/sam2.1-hiera-tiny")
     parser.add_argument("--runs-root", dest="runs_root", default="runs")
     parser.add_argument("--clips", nargs="*", help="Optional subset of clip IDs to process")
     parser.add_argument("--device", choices=["cpu", "cuda", "mps"], default="cuda")

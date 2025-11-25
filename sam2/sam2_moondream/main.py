@@ -16,11 +16,11 @@ from autoprompt_moondream import MoondreamBoxPromptor, PROMPT_TERMS
 
 def parse_args() -> base.argparse.Namespace:
     parser = base.argparse.ArgumentParser(description="SAM-2 with Moondream auto-prompt (per-shot sessions, multi-object)")
-    parser.add_argument("--data-root", dest="data_root", default="D:\project_billboard\sam2\data")
-    parser.add_argument("--weights", default="D:\project_billboard\sam2\models\sam2.1-hiera-tiny")
+    parser.add_argument("--data-root", dest="data_root", default="..\sam2\data")
+    parser.add_argument("--weights", default="facebook/sam2.1-hiera-tiny")
     parser.add_argument("--runs-root", dest="runs_root", default="runs")
     parser.add_argument("--clips", nargs="*", help="Optional subset of clip IDs to process")
-    parser.add_argument("--device", choices=["cpu", "cuda", "mps"], default=None)
+    parser.add_argument("--device", choices=["cpu", "cuda", "mps"], default="mps")
     # Auto-prompt / Moondream
     parser.add_argument("--auto-prompt", action="store_true", default=False)
     parser.add_argument("--moondream-model", default="vikhyatk/moondream2")
@@ -579,20 +579,36 @@ def _install_hooks_and_overrides(args) -> None:
     base.process_clip = process_clip_moondream  # type: ignore[attr-defined]
 
 
-if __name__ == "__main__":
-    args = parse_args()
+
     # Ensure pass/fail thresholds exist to avoid KeyError in write_run_notes
-    try:
-        _m = base.RUN_SPEC.setdefault("metrics", {})
-        _m.setdefault("pass_fail", {
-            "gentle": {"iou_median_min": 0.0, "jitter_norm_median_pct_max": 1e9},
-            "fast": {"iou_median_min": 0.0},
-        })
-    except Exception:
-        pass
+    # try:
+    #     _m = base.RUN_SPEC.setdefault("metrics", {})
+    #     _m.setdefault("pass_fail", {
+    #         "gentle": {"iou_median_min": 0.0, "jitter_norm_median_pct_max": 1e9},
+    #         "fast": {"iou_median_min": 0.0},
+    #     })
+    # except Exception:
+    # #     pass
 
     # Install overrides before base.main()
+    # _install_hooks_and_overrides(args)
+
+    # # Extend RUN_SPEC with any requested clip IDs not preconfigured
+    # req = args.clips or []
+    # _ensure_requested_in_runspec(req, Path(args.data_root))
+
+    # # Monkey-patch only the CLI and device selection; leave everything else identical
+    # base.parse_args = parse_args  # type: ignore[attr-defined]
+    # base.select_device = select_device  # type: ignore[attr-defined]
+    # base.main()
+
+if __name__ == "__main__":
+    args = parse_args()
+    # Install overrides before base.main()
     _install_hooks_and_overrides(args)
+    # Ensure RUN_SPEC has a clips key
+    if "clips" not in base.RUN_SPEC:
+        base.RUN_SPEC["clips"] = []
 
     # Extend RUN_SPEC with any requested clip IDs not preconfigured
     req = args.clips or []
@@ -602,6 +618,3 @@ if __name__ == "__main__":
     base.parse_args = parse_args  # type: ignore[attr-defined]
     base.select_device = select_device  # type: ignore[attr-defined]
     base.main()
-
-
-

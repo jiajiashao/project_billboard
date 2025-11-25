@@ -59,26 +59,26 @@ RUN_SPEC = {
         "random_seed": 42,
         "deterministic": True,
     },
-    "clips": [
-        {
-            "id": "clip_gentle",
-            "input_width": 1024,
-            "stride": 2,
-            "full_frame": True,
-            "seed": {
-                "bbox_pad_px": 6,
-            },
-        },
-        {
-            "id": "clip_fast",
-            "input_width": 1280,
-            "stride": 1,
-            "full_frame": True,
-            "seed": {
-                "bbox_pad_px": 6,
-            },
-        },
-    ],
+    # "clips": [
+    #     {
+    #         "id": "clip_gentle",
+    #         "input_width": 1280,
+    #         "stride": 1,
+    #         "full_frame": True,
+    #         "seed": {
+    #             "bbox_pad_px": 6,
+    #         },
+    #     },
+    #     {
+    #         "id": "clip_fast",
+    #         "input_width": 1280,
+    #         "stride": 1,
+    #         "full_frame": True,
+    #         "seed": {
+    #             "bbox_pad_px": 6,
+    #         },
+    #     },
+    # ],
     "metrics": {
         "compute": ["iou", "biou", "jitter_norm_pct"],
         "scoring_policy": {

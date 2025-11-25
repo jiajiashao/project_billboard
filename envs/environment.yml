@@ -1,0 +1,17 @@
+name: sam2
+channels:
+  - conda-forge
+  - defaults
+dependencies:
+  - python=3.10
+  - pip
+  - numpy
+  - scipy
+  - pillow
+  - opencv
+  - ffmpeg
+  - pyyaml
+  - matplotlib
+  - tqdm
+  - requests
+  

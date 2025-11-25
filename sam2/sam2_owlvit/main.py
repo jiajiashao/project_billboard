@@ -16,11 +16,11 @@ from autoprompt_owlvit import OwlVitBoxPromptor, PROMPT_TERMS
 
 def parse_args() -> base.argparse.Namespace:
     parser = base.argparse.ArgumentParser(description="SAM-2 with OWL-ViT auto-prompt (per-shot sessions)")
-    parser.add_argument("--data-root", dest="data_root", default="D:\Billboard_Project - Copy\sam2\data")
-    parser.add_argument("--weights", default="D:\Billboard_Project - Copy\sam2\models\sam2.1-hiera-tiny")
+    parser.add_argument("--data-root", dest="data_root", default="..\sam2\data")
+    parser.add_argument("--weights", default="facebook/sam2.1-hiera-tiny")
     parser.add_argument("--runs-root", dest="runs_root", default="runs")
     parser.add_argument("--clips", nargs="*", help="Optional subset of clip IDs to process")
-    parser.add_argument("--device", choices=["cpu", "cuda", "mps"], default=None)
+    parser.add_argument("--device", choices=["cpu", "cuda", "mps"], default="mps")
     # Auto-prompt / OWL-ViT
     parser.add_argument("--auto-prompt", action="store_true", default=False)
     parser.add_argument("--owlvit-model", default="google/owlv2-base-patch16-ensemble")
@@ -674,6 +674,9 @@ if __name__ == "__main__":
     args = parse_args()
     # Install overrides before base.main()
     _install_hooks_and_overrides(args)
+    # Ensure RUN_SPEC has a clips key
+    if "clips" not in base.RUN_SPEC:
+        base.RUN_SPEC["clips"] = []
 
     # Extend RUN_SPEC with any requested clip IDs not preconfigured
     req = args.clips or []

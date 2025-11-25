@@ -63,6 +63,17 @@ def write_palettized_seed(src_png: Path, out_png: Path) -> None:
 
 
 def run_xmem_eval(root: Path, clip: str, device: str = "cuda", size: int = 480, mem_every: int = 5, generic_path: Optional[Path] = None) -> Tuple[Path, Path]:
+    # XMem only supports CUDA; bail early with a clear message if CUDA is not available
+    if str(device).lower() != "cuda":
+        raise SystemExit("XMem eval currently supports only CUDA devices; run on a CUDA GPU box")
+    try:
+        import torch  # type: ignore
+        has_cuda = bool(torch.cuda.is_available())
+    except Exception:
+        has_cuda = False
+    if not has_cuda:
+        raise SystemExit("XMem eval requires a CUDA-capable GPU (torch.cuda.is_available() is False)")
+
     xmem_root = root / "model" / "xmem"
     model_path = xmem_root / "saves" / "XMem-s012.pth"
     if not model_path.exists():
@@ -84,9 +95,6 @@ def run_xmem_eval(root: Path, clip: str, device: str = "cuda", size: int = 480, 
     ]
     print("CMD:", " ".join(cmd))
     env = os.environ.copy()
-    if device == "cpu":
-        print("Warning: CPU mode is not supported by XMem eval; attempting anyway.")
-        env["CUDA_VISIBLE_DEVICES"] = ""
     try:
         subprocess.run(cmd, cwd=os.fspath(xmem_root), check=True)
     except subprocess.CalledProcessError as e:

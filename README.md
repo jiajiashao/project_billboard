@@ -77,6 +77,9 @@ Outputs
 
 Example: after a SAM‑2 GT baseline on `clip_corner`, look under `sam2/runs/*/<run_id>/clip_corner/overlay.mp4` and `.../pilot_*.log`.
 
+(Prompt boxes and overlay screenshot)
+<img src="images/boxes_overlay.png" alt="boxes overlay" width="800"/>
+
 Known requirements / pitfalls
 -----------------------------
 - XMem **requires a CUDA-capable GPU**; on CPU/Mac it will exit early. Use `--skip-xmem` to debug seeds only.

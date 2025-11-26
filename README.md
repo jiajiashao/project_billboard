@@ -3,7 +3,7 @@ Project Billboard –
 
 Workflow
 -------------------
-![workflow](backup/workflow.png)
+![workflow](images/workflow.png)
 
 Clone & Setup
 -------------------
@@ -88,7 +88,7 @@ Entry points and key CLI flags
 
 Each pipeline contains a prompter that generates box prompter and a segmentation model that produce masks.
 
-![pipelines](backup/pipelines.png)
+![pipelines](images/pipelines.png)
 
 
 - Prompts precedence: `--prompts` (CLI) > `--prompts-file` > built‑in defaults.

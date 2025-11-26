@@ -372,7 +372,7 @@ def write_summary(run_dir: Path, summaries: List[Dict[str, object]], run_id: str
 
 def main():
     ap = argparse.ArgumentParser(description="Run XMem locally with SAM-2-like outputs")
-    ap.add_argument('--root', default=r'/Users/jiashao/project_billboard/project_billboard/xmem', help='Project root containing data/, model/ etc')
+    ap.add_argument('--root', default=r'./../', help='Project root containing data/, model/ etc')
     ap.add_argument('--clip', help='Clip ID, e.g. clip_fast')
     ap.add_argument('--device', default='cuda', choices=['cuda','cpu'])
     ap.add_argument('--frames', type=int, default=-1, help='How many initial frames to prepare (-1 = all)')

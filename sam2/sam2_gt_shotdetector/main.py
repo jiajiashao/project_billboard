@@ -1,88 +1,135 @@
-﻿import sys
+﻿# Standard library imports for path manipulation and system path management
+import sys
 from pathlib import Path
 from tkinter import FALSE
 
-# Ensure project root (parent of experiments/) is importable so sam2_smoke/sam2_pilot resolve
+# Path setup block: Ensures the project root directory is in Python's module search path
+# This allows imports from sam2_smoke and sam2_pilot modules to resolve correctly
+# ROOT points to the parent directory of the current file (sam2/)
 ROOT = Path(__file__).resolve().parent.parent
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
 # Import the original Fix-2 script unchanged
+# This imports the base SAM-2 implementation that contains the core functionality
 import sam2_base as base
 
 
 def parse_args() -> base.argparse.Namespace:
     """CLI with CUDA enabled; mirrors Fix-2 defaults."""
+    # Command-line argument parser setup
+    # Creates an argument parser for the SAM-2 pilot runner with CUDA support
     parser = base.argparse.ArgumentParser(description="SAM-2 pilot runner for Fix-2 (CUDA-enabled)")
-    parser.add_argument("--data-root", dest="data_root", default="..\sam2\data")
+    # Data root directory: where input clips and ground truth frames are stored
+    parser.add_argument("--data-root", dest="data_root", default="./../data")
+    # Model weights: specifies which SAM-2 model variant to use (default is tiny hiera model)
     parser.add_argument("--weights", default="facebook/sam2.1-hiera-tiny")
+    # Runs root directory: where output results will be saved
     parser.add_argument("--runs-root", dest="runs_root", default="runs")
+    # Clips: optional list of specific clip IDs to process (if not provided, processes all)
     parser.add_argument("--clips", nargs="*", help="Optional subset of clip IDs to process")
+    # Device selection: choose between CPU, CUDA (GPU), or MPS (Apple Silicon)
     parser.add_argument("--device", choices=["cpu", "cuda", "mps"], default="cuda")
+    # Reseed flag: enables reseeding functionality during tracking
     parser.add_argument("--reseed", action="store_true", default=False)
     return parser.parse_args()
 
 
 def select_device(preferred: str | None) -> str:
     """CUDA-aware device selection compatible with Fix-2 semantics."""
+    # Device selection logic: handles user preference and fallback scenarios
+    # Selects the computation device (CPU, CUDA, or MPS) based on availability
     if preferred:
+        # If user specified a device, validate it's available before using it
+        # Check if CUDA was requested but not available - fallback to CPU
         if preferred == "cuda" and not base.torch.cuda.is_available():
             print("Requested cuda but unavailable; falling back to cpu")
             return "cpu"
+        # Check if MPS (Apple Silicon) was requested but not available - fallback to CPU
         if preferred == "mps" and not base.torch.backends.mps.is_available():
             print("Requested mps but unavailable; falling back to cpu")
             return "cpu"
+        # If preferred device is available, use it
         return preferred
+    # Auto-detection: if no preference specified, choose best available device
+    # Priority: CUDA > MPS > CPU
     if base.torch.cuda.is_available():
         return "cuda"
     return "mps" if base.torch.backends.mps.is_available() else "cpu"
 
+# Type hints for function parameters and return values
 from typing import List, Dict
 
 def _default_clip_cfg(cid: str) -> Dict:
     # Fast-like default config mirroring Fix-2 fast profile
+    # Creates a default configuration dictionary for a clip that wasn't preconfigured
+    # Extracts reseed triggers from existing clip configs (prefers second clip if available)
+    # Note: This version has reseeding ENABLED (unlike the base version)
     trig = base.RUN_SPEC["clips"][1]["reseed"]["triggers"] if len(base.RUN_SPEC.get("clips", [])) > 1 else base.RUN_SPEC["clips"][0]["reseed"]["triggers"]
     return {
-        "id": cid,
-        "input_width": 1280,
-        "stride": 1,
-        "full_frame": True,
+        "id": cid,  # Clip identifier
+        "input_width": 1280,  # Frame width for processing
+        "stride": 1,  # Process every frame (stride of 1 means no frame skipping)
+        "full_frame": True,  # Process the entire frame
         "seed": {
-            "mode": "first_labeled_frame",
-            "from_gt_bbox": True,
-            "bbox_pad_px": 6,
-            "negatives": {"mode": "edge_fence", "count": 4, "offset_px": 6},
+            # Seed configuration: how to initialize tracking on the first frame
+            "mode": "first_labeled_frame",  # Use the first frame with ground truth labels
+            "from_gt_bbox": True,  # Initialize from ground truth bounding box
+            "bbox_pad_px": 6,  # Padding around bounding box in pixels
+            "negatives": {"mode": "edge_fence", "count": 4, "offset_px": 6},  # Negative point sampling strategy
         },
         "reseed": {
-            "enabled": True,
-            "triggers": trig,
-            "action": "reseed_with_box_plus_neg",
-            "cooldown_frames": 3,
-            "max_events": 100,
+            # Reseed configuration: how to reinitialize tracking when it fails
+            # NOTE: This version has reseeding ENABLED (unlike base version)
+            "enabled": True,  # Reseeding is enabled by default in this variant
+            "triggers": trig,  # Conditions that trigger reseeding (from existing config)
+            "action": "reseed_with_box_plus_neg",  # Action to take when reseeding
+            "cooldown_frames": 3,  # Minimum frames between reseed events (3 frames cooldown)
+            "max_events": 100,  # Maximum number of reseed events allowed (higher than base)
         },
     }
 
 def _ensure_requested_in_runspec(requested: List[str], data_root: Path) -> None:
+    # Ensures that all requested clip IDs are present in RUN_SPEC configuration
+    # If a clip is requested but not preconfigured, adds it with default settings
     if not requested:
-        return
+        return  # No clips requested, nothing to do
+    # Get set of existing clip IDs that are already configured
     existing = {cfg.get("id") for cfg in base.RUN_SPEC.get("clips", [])}
+    # Process each requested clip ID
     for cid in requested:
         if cid in existing:
-            continue
-        mp4 = data_root / "clips" / f"{cid}.mp4"
-        gt = data_root / "gt_frames" / cid
+            continue  # Clip already configured, skip
+        # Check if required input files exist for this clip
+        mp4 = data_root / "clips" / f"{cid}.mp4"  # Video file path
+        gt = data_root / "gt_frames" / cid  # Ground truth frames directory
+        # Validate that both video and ground truth data exist
         if not mp4.exists() or not gt.exists():
             print(f'Skipping unknown clip {cid!r}: inputs not found under {data_root}')
             continue
+        # Add the clip to RUN_SPEC with default configuration (with reseeding enabled)
         base.RUN_SPEC["clips"].append(_default_clip_cfg(cid))
 
 if __name__ == "__main__":
-    # Extend RUN_SPEC with any requested clip IDs not preconfigured
+    # Main execution block: sets up configuration and runs SAM-2 tracking
+    
+    # Step 1: Parse command-line arguments to get user preferences
     _args_preview = parse_args()
-    req = _args_preview.clips or []
+    req = _args_preview.clips or []  # Extract requested clip IDs (empty list if none specified)
+    
+    # Step 2: Extend RUN_SPEC with any requested clip IDs not preconfigured
+    # This ensures that clips specified via command line are added to the configuration
+    # with default settings (including reseeding enabled)
     _ensure_requested_in_runspec(req, Path(_args_preview.data_root))
-    # Monkey-patch only the CLI and device selection; leave everything else identical
+    
+    # Step 3: Monkey-patch only the CLI and device selection functions
+    # Replace the base module's functions with our custom versions
+    # This allows us to customize argument parsing and device selection without modifying base code
     base.parse_args = parse_args  # type: ignore[attr-defined]
     base.select_device = select_device  # type: ignore[attr-defined]
+    
+    # Step 4: Call the main function from base module to start processing
+    # This executes the actual SAM-2 tracking pipeline with our custom configurations
+    # Note: This variant enables reseeding by default for all clips
     base.main()
 

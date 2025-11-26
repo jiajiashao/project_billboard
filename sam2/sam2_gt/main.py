@@ -36,7 +36,7 @@ def parse_args() -> base.argparse.Namespace:
     # Device selection: choose between CPU, CUDA (GPU), or MPS (Apple Silicon)
     parser.add_argument("--device", choices=["cpu", "cuda", "mps"], default="cuda")
     # Reseed flag: enables reseeding functionality during tracking
-    parser.add_argument("--reseed", action="store_true", default=False)
+    parser.add_argument("--reseed", action="store_true", default=True)
     return parser.parse_args()
 
 
@@ -83,11 +83,11 @@ def _default_clip_cfg(cid: str) -> Dict:
         },
         "reseed": {
             # Reseed configuration: how to reinitialize tracking when it fails
-            "enabled": False,  # Reseeding is disabled by default
+            "enabled": true,  # Reseeding is disabled by default
             "triggers": trig,  # Conditions that trigger reseeding (from existing config)
             "action": "reseed_with_box_plus_neg",  # Action to take when reseeding
-            "cooldown_frames": 0,  # Minimum frames between reseed events
-            "max_events": 0,  # Maximum number of reseed events allowed
+            "cooldown_frames": 3,  # Minimum frames between reseed events
+            "max_events": 100,  # Maximum number of reseed events allowed
         },
     }
 

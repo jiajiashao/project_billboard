@@ -1,5 +1,9 @@
-Project Billboard – Run Guide
+Project Billboard – 
 =============================
+
+Workflow
+-------------------
+![workflow](backup/workflow.png)
 
 Clone & Setup
 -------------------
@@ -81,6 +85,12 @@ Known requirements / pitfalls
 
 Entry points and key CLI flags
 ------------------------------
+
+Each pipeline contains a prompter that generates box prompter and a segmentation model that produce masks.
+
+![pipelines](backup/pipelines.png)
+
+
 - Prompts precedence: `--prompts` (CLI) > `--prompts-file` > built‑in defaults.
 - Path args differ: SAM‑2 uses `--data-root`, XMem uses `--root`.
 For each program, start by cd‑ing into the directory that contains its main.py, which keeps the command-line arguments to a minimum. For example:
@@ -96,7 +106,6 @@ For each program, start by cd‑ing into the directory that contains its main.py
      - `--runs-root <path>` (default `runs`)
      - `--device {cuda,cpu,mps}` (default `cuda`, auto-fallback if unavailable)
      - `--reseed` (flag; disabled by default)
-
 
 
 2) `sam2/sam2_gt_shotdetector/main.py`

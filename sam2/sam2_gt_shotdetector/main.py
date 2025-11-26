@@ -81,7 +81,7 @@ def _default_clip_cfg(cid: str) -> Dict:
         "reseed": {
             # Reseed configuration: how to reinitialize tracking when it fails
             # NOTE: This version has reseeding ENABLED (unlike base version)
-            "enabled": True,  # Reseeding is enabled by default in this variant
+            "enabled": False,  # Reseeding is enabled by default in this variant
             "triggers": trig,  # Conditions that trigger reseeding (from existing config)
             "action": "reseed_with_box_plus_neg",  # Action to take when reseeding
             "cooldown_frames": 3,  # Minimum frames between reseed events (3 frames cooldown)

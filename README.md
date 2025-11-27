@@ -1,5 +1,14 @@
-Project Billboard – 
+Project Billboard
 =============================
+
+A minimal, reproducible toolkit for perimeter‑billboard segmentation in sports video. It ships ready‑to‑run pipelines (SAM‑2 or XMem) with optional auto‑prompting (OWL‑ViT, Moondream, or a fine‑tuned YOLO11 seeder) and shot detection.
+
+What’s reproducible:
+- **Overlays & seed snapshots**: run on your own clips with no ground truth.
+- **Metrics (IoU/BIoU/jitter)**: produced only when LabelMe GT masks exist under `sam2/data/gt_frames/<clip_id>/`.
+
+Pick a pipeline under `sam2/` or `xmem/`, set up the env, and run one of the examples below. (XMem requires CUDA; SAM‑2 seeding can run on CPU/MPS.)
+
 
 Workflow
 -------------------

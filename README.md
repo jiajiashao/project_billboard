@@ -258,13 +258,16 @@ Acknowledgements
 ----------------
 This repository assembles wrappers and helpers around the following open‑source models and libraries. Please refer to their original licenses and documentation for usage terms and citations:
 
-- **SAM‑2 (Segment Anything Model 2)** by Meta — weights via Hugging Face: `facebook/sam2.1-hiera-tiny`.
-- **XMem** (long‑term video object segmentation) — implementation from the original authors’ repository.
-- **OWL‑ViT / OWL‑V2** by Google — zero‑/open‑vocabulary object detection (e.g., `google/owlv2-base-patch16-ensemble`).
-- **Moondream2** — lightweight VLM used for promptable box proposals (`vikhyatk/moondream2`).
-- **Ultralytics YOLOv11** — fine‑tuned tiny detector used for per‑shot seeding.
-- **PySceneDetect** — shot boundary detection helpers.
-- **OpenCV** and **FFmpeg** — frame decoding, image I/O, and video utilities.
-- **Hugging Face Transformers**, **huggingface_hub**, and **timm** — model interfaces and backbones.
+- **SAM-2 (Segment Anything Model 2)** — Meta AI — [facebookresearch/segment-anything-2](https://github.com/facebookresearch/segment-anything-2) — License: **Apache-2.0** (plus third-party components noted in repo).
+- **XMem** (long-term video object segmentation) — [hkchengrex/XMem](https://github.com/hkchengrex/XMem) — License: **MIT**.
+- **OWL-ViT / OWL-V2** (open-vocabulary detection) — Google Research Scenic — [google-research/scenic/projects/owl_vit](https://github.com/google-research/scenic/tree/main/scenic/projects/owl_vit) — License: **Apache-2.0**.
+- **Moondream2** (lightweight VLM for box proposals) — Hugging Face model card: [vikhyatk/moondream2](https://huggingface.co/vikhyatk/moondream2) — License: **Apache-2.0**.
+- **Ultralytics YOLO11** (first-frame seeding) — [ultralytics/ultralytics](https://github.com/ultralytics/ultralytics) — License: **AGPL-3.0**.
+- **PySceneDetect** (shot detection) — [Breakthrough/PySceneDetect](https://github.com/Breakthrough/PySceneDetect) — License: **BSD-3-Clause**.
+- **OpenCV** (I/O & vision utils) — [opencv/opencv](https://github.com/opencv/opencv) — License: **Apache-2.0** (OpenCV ≥4.5).
+- **FFmpeg** (video decoding/encoding) — [ffmpeg.org](https://ffmpeg.org) — License: **LGPL-2.1+**/**GPL-2.0+** (depending on build options).
+- **Hugging Face Transformers** — [huggingface/transformers](https://github.com/huggingface/transformers) — License: **Apache-2.0**.
+- **huggingface_hub** — [huggingface/huggingface_hub](https://github.com/huggingface/huggingface_hub) — License: **Apache-2.0**.
+- **timm (PyTorch Image Models)** — [huggingface/pytorch-image-models](https://github.com/huggingface/pytorch-image-models) — License: **Apache-2.0**.
 
 We thank the respective authors and communities for making these resources available.

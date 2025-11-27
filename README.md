@@ -108,7 +108,7 @@ Each pipeline contains a prompter that generates box prompter and a segmentation
 - Prompts precedence: `--prompts` (CLI) > `--prompts-file` > built‑in defaults.
 - Path args differ: SAM‑2 uses `--data-root`, XMem uses `--root`.
 For each program, start by cd‑ing into the directory that contains its main.py, which keeps the command-line arguments to a minimum. For example:
-
+ 
 `cd /project_billboard/xmem/xmem_yolo11`
 `python main_yolo.py <required args>`
 
@@ -254,7 +254,7 @@ Notes
 - Prompts: keep a reusable list in `prompts_list.txt` and pass via `--prompts-file` when supported.
 - For seed-only debugging on non-CUDA hosts, use `--skip-xmem` in the XMem OWL-ViT/YOLO wrappers; inspect `re_prompts_*.csv` and `shot_XXX_seed.jpg`.
 
-Acknowledgements
+Acknowledgement
 ----------------
 This repository assembles wrappers and helpers around the following open‑source models and libraries. Please refer to their original licenses and documentation for usage terms and citations:
 

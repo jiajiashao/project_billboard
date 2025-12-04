@@ -89,7 +89,7 @@ Example: after a SAM‑2 GT baseline on `clip_corner`, look under `sam2/runs/*/<
 
 
 - Output example 1: Prompt boxes and overlay screenshot from run "clip_corner + OWL-ViT + SAM-2".
-<img src="appendent/boxes_overlay.png" alt="boxes overlay" width="800"/>
+  <img src="appendent/boxes_overlay.png" alt="boxes overlay" width="800"/>
 
 - Output example 2: Overlay from run "clip_gentle + YOLO11n + SAM-2". The billboard is propagated with purple masks.
   

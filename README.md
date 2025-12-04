@@ -92,7 +92,10 @@ Example: after a SAM‑2 GT baseline on `clip_corner`, look under `sam2/runs/*/<
 <img src="appendent/boxes_overlay.png" alt="boxes overlay" width="800"/>
 
 - Output example 2: overlay from run "clip_gentle + YOLO11n + SAM-2"
-<video src="appendent/overlay_clip_gentle_YOLO_sam2.mp4" controls width="800"></video>
+  
+  ![Overlay video](appendent/overlay_clip_gentle_YOLO_sam2.gif)
+  
+  [📹 Download original video (MP4)](appendent/overlay_clip_gentle_YOLO_sam2.mp4)
 
 
 
@@ -108,7 +111,7 @@ Entry points and key CLI flags
 
 Each pipeline contains a prompter that generates box prompter and a segmentation model that produce masks.
 
-<img src="images/pipelines.png" alt="pipelines" width="800"/>
+<img src="appendent/pipelines.png" alt="pipelines" width="800"/>
 
 
 - Prompts precedence: `--prompts` (CLI) > `--prompts-file` > built‑in defaults.

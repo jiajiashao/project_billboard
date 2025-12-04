@@ -12,7 +12,7 @@ Pick a pipeline under `sam2/` or `xmem/`, set up the env, and run one of the exa
 
 Workflow
 -------------------
-<img src="images/workflow.png" alt="workflow" width="800"/>
+<img src="appendent/workflow.png" alt="workflow" width="800"/>
 
 Clone & Setup
 -------------------
@@ -88,8 +88,14 @@ Example: after a SAM‑2 GT baseline on `clip_corner`, look under `sam2/runs/*/<
 
 
 
-(Prompt boxes and overlay screenshot)
-<img src="images/boxes_overlay.png" alt="boxes overlay" width="800"/>
+- Output example 1: Prompt boxes and overlay screenshot
+<img src="appendent/boxes_overlay.png" alt="boxes overlay" width="800"/>
+
+- Output example 2: overlay from run "clip_gentle + YOLO11n + SAM-2"
+<video src="appendent/overlay_clip_gentle_YOLO_sam2.mp4" controls width="800"></video>
+
+
+
 
 Known requirements / pitfalls
 -----------------------------
@@ -254,7 +260,7 @@ Notes
 - Prompts: keep a reusable list in `prompts_list.txt` and pass via `--prompts-file` when supported.
 - For seed-only debugging on non-CUDA hosts, use `--skip-xmem` in the XMem OWL-ViT/YOLO wrappers; inspect `re_prompts_*.csv` and `shot_XXX_seed.jpg`.
 
-Acknowledgement
+Acknowledgements
 ----------------
 This repository assembles wrappers and helpers around the following open‑source models and libraries. Please refer to their original licenses and documentation for usage terms and citations:
 
@@ -271,3 +277,8 @@ This repository assembles wrappers and helpers around the following open‑sourc
 - **timm (PyTorch Image Models)** — [huggingface/pytorch-image-models](https://github.com/huggingface/pytorch-image-models) — License: **Apache-2.0**.
 
 We thank the respective authors and communities for making these resources available.
+
+Appendent
+----------------
+Output analysis from 69 runs across the data video clips and configurations:
+

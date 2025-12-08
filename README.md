@@ -103,7 +103,7 @@ Interactive Report (Power BI Desktop)
 - ⬇️ **[Download billboard_segmentation.pbix](appendent/billboard_segmentation.pbix)**  
   Open with **Power BI Desktop** (Windows). No Pro license required.
 
-  ![Report preview](appendent/billboard_segmentation.png)
+![Report preview](appendent/billboard_segmentation.png)
 
 > Notes for viewers:
 > - If prompted about data sources, allow local file access. The report expects CSVs in this repo (see `appendent/summary.csv`).

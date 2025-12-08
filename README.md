@@ -95,10 +95,18 @@ Example: after a SAM‑2 GT baseline on `clip_corner`, look under `sam2/runs/*/<
   
   ![Overlay video](appendent/overlay_clip_gentle_YOLO_sam2.gif)
   
-  [📹 Download original video (MP4)](appendent/overlay_clip_gentle_YOLO_sam2.mp4)
+  [📹 Download original video (MP4)](https://drive.google.com/drive/folders/1XOD1ReVIl8PlCcn4e6SBeFtgdsGx6qd-)
 
+ 
+Interactive Report (Power BI Desktop)
+-------------------------------------
+- ⬇️ **[Download billboard_segmentation.pbix](appendent/billboard_segmentation.pbix)**  
+  Open with **Power BI Desktop** (Windows). No Pro license required.
 
-
+> Notes for viewers:
+> - If prompted about data sources, allow local file access. The report expects CSVs in this repo (see `outputs/`).
+> - On macOS, Power BI Desktop isn’t available. Mac users can view the **PDF export** or the **overlay GIF/MP4s**.
+  
 
 Known requirements / pitfalls
 -----------------------------

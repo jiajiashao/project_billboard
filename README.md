@@ -96,20 +96,6 @@ Example: after a SAM‑2 GT baseline on `clip_corner`, look under `sam2/runs/*/<
   ![Overlay video](appendent/overlay_clip_gentle_YOLO_sam2.gif)
   
   [📹 Download original video (MP4)](https://drive.google.com/drive/folders/1XOD1ReVIl8PlCcn4e6SBeFtgdsGx6qd-)
-
- 
-Interactive Report (Power BI Desktop)
--------------------------------------
-- ⬇️ **[Download billboard_segmentation_report.pbix](appendent/billboard_segmentation_report.pbix)**  
-  Open with **Power BI Desktop** (Windows). No Pro license required.
-
-![Report preview](appendent/billboard_segmentation_report.png)
-
-- 📄 **[View as PDF](appendent/billboard_segmentation_report.pdf)** (for quick browsing or macOS users)
-
-> Notes for viewers:
-> - If prompted about data sources, allow local file access. The report expects CSVs in this repo (see `appendent/summary.csv`).
-> - On macOS, Power BI Desktop isn’t available. Mac users can view the `appendent/billboard_segmentation_report.pdf` or the **overlay GIF/MP4s**.
   
 
 Known requirements / pitfalls
@@ -274,6 +260,20 @@ Notes
 - Ensure video clips are present under `data/clips/` before running.
 - Prompts: keep a reusable list in `prompts_list.txt` and pass via `--prompts-file` when supported.
 - For seed-only debugging on non-CUDA hosts, use `--skip-xmem` in the XMem OWL-ViT/YOLO wrappers; inspect `re_prompts_*.csv` and `shot_XXX_seed.jpg`.
+
+ 
+Interactive Report from runs (Power BI Desktop)
+-------------------------------------
+- ⬇️ **[Download billboard_segmentation_report.pbix](appendent/billboard_segmentation_report.pbix)**  
+  Open with **Power BI Desktop** (Windows). No Pro license required.
+
+![Report preview](appendent/billboard_segmentation_report.png)
+
+- 📄 **[View as PDF](appendent/billboard_segmentation_report.pdf)** (for quick browsing or macOS users)
+
+> Notes for viewers:
+> - If prompted about data sources, allow local file access. The report expects CSVs in this repo (see `appendent/summary.csv`).
+> - On macOS, Power BI Desktop isn’t available. Mac users can view the `appendent/billboard_segmentation_report.pdf` or the **overlay GIF/MP4s**.
 
 Acknowledgements
 ----------------

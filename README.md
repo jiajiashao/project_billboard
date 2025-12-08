@@ -103,9 +103,11 @@ Interactive Report (Power BI Desktop)
 - ⬇️ **[Download billboard_segmentation.pbix](appendent/billboard_segmentation.pbix)**  
   Open with **Power BI Desktop** (Windows). No Pro license required.
 
+  ![Report preview](appendent/billboard_segmentation.png)
+
 > Notes for viewers:
-> - If prompted about data sources, allow local file access. The report expects CSVs in this repo (see `outputs/`).
-> - On macOS, Power BI Desktop isn’t available. Mac users can view the **PDF export** or the **overlay GIF/MP4s**.
+> - If prompted about data sources, allow local file access. The report expects CSVs in this repo (see `appendent/summary.csv`).
+> - On macOS, Power BI Desktop isn’t available. Mac users can view the `appendent/billboard_segmentation.pdf` or the **overlay GIF/MP4s**.
   
 
 Known requirements / pitfalls

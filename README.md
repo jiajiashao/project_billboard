@@ -100,7 +100,7 @@ Example: after a SAM‑2 GT baseline on `clip_corner`, look under `sam2/runs/*/<
  
 Interactive Report (Power BI Desktop)
 -------------------------------------
-- ⬇️ **[Download billboard_segmentation.pbix](appendent/billboard_segmentation_report.pbix)**  
+- ⬇️ **[Download billboard_segmentation_report.pbix](appendent/billboard_segmentation_report.pbix)**  
   Open with **Power BI Desktop** (Windows). No Pro license required.
 
 ![Report preview](appendent/billboard_segmentation_report.png)

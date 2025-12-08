@@ -19,7 +19,7 @@ Clone & Setup
 ```bash
 # clone & env
 git clone https://github.com/jiajiashao/project_billboard.git
-cd project_billboard/envs
+cd project_billboard
 conda env create -f envs/environment.yml
 conda activate sam2 
 
@@ -32,6 +32,42 @@ pip install --upgrade opencv-python-headless
 
 # ffmpeg present?
 ffmpeg -version
+```
+
+Quickstart (copy–paste)
+-------------------
+These minimal commands produce an overlay video and per‑shot seed JPGs on any MP4 (no GT required). Replace `clip_corner` with your own clip ID and ensure the MP4 exists under the expected `data/clips/` folder for the chosen runner.
+
+```bash
+# 1) SAM‑2 + Moondream (no GT needed; overlays + seed snapshots)
+python sam2/sam2_moondream/main.py \
+  --clips clip_corner \
+  --prompts "perimeter billboard; sideline banner" \
+  --data-root sam2/data \
+  --auto-prompt \
+  --device cuda
+
+# 2) SAM‑2 + OWL‑ViT (alternative auto‑prompter)
+python sam2/sam2_owlvit/main.py \
+  --clips clip_corner \
+  --prompts "perimeter billboard; stadium advertising board" \
+  --data-root sam2/data \
+  --auto-prompt \
+  --device cuda
+
+# 3) XMem + YOLO11 (CUDA required; 'run-only' skips metrics)
+cd xmem/xmem_yolo11
+python main_yolo.py \
+  --clip clip_corner \
+  --root ./../ \
+  --auto-prompt \
+  --run-only \
+  --device cuda
+```
+
+Outputs:
+- SAM‑2 runners → `sam2/runs/<config>/<run_id>/clip_<id>/overlay.mp4` and `shot_XXX_seed.jpg`
+- XMem runners → `xmem/outputs/<run_id>/clip_<id>/overlay.mp4` and per‑shot seeds
 ```
 
 This repo contains eight entry-point pipelines (SAM-2 and XMem variants) plus supporting prompt/shot-detection tooling. Paths below are repo‑relative unless stated.
@@ -58,14 +94,36 @@ For XMem follow the below path(s) for data.
 Additionally the prompts list is provided under project root project_billboard:
 - Prompts list: `prompts_list.txt`
 
+```
+Example layout
+--------------
+project_billboard/
+  sam2/
+    data/
+      clips/
+        clip_corner.mp4
+      gt_frames/
+        clip_corner/
+          frame_000000.jpg
+          frame_000000.json     # optional: LabelMe polygon for metrics
+  xmem/
+    data/
+      clips/
+        clip_corner.mp4
+      gt_frames/
+        clip_corner/
+          00000.png              # optional: seed mask for XMem GT runner
+          frame_000000.json      # optional: metrics
+```
+
 Models / weights
 ----------------
 **Place or auto‑download weights exactly to these paths:**
 
 - **SAM‑2** Pulled automatically by HuggingFace on first run: `facebook/sam2.1-hiera-tiny`
 
-- **XMem checkpoint** (CUDA only)
-Please download the XMem checkpoint from [Google Drive](https://) and place it inside: 
+- **XMem checkpoint** (CUDA only)  
+  Please download the XMem checkpoint from [Google Drive](https://) **(ensure the link is public)** and place it inside:
   - `project_billboard/xmem/model/xmem/saves/`
 
 - **OWL‑ViT** (auto‑prompt)
@@ -84,7 +142,7 @@ Outputs
 - SAM-2: under `project_billboard/sam2/runs/<config>/<run_id>/` (overlay MP4, per-shot annotated JPGs, `re_prompts_*.csv`, `pilot_*.log`, summary CSVs).
 - XMem: under `project_billboard/xmem/outputs/<run_id>/` (or `xmem/outputs/G_<clip>/runs/<run_id>/` for YOLO/XMem). You get masks PNGs, overlay MP4 (when XMem runs), `re_prompts_*.csv`, per-shot seed JPGs, pilot log, summary CSV.
 
-Example: after a SAM‑2 GT baseline on `clip_corner`, look under `sam2/runs/*/<run_id>/clip_corner/overlay.mp4` and `.../pilot_*.log`.
+  Example: after a SAM‑2 GT baseline on `clip_corner`, look under `sam2/runs/*/<run_id>/clip_corner/overlay.mp4` and `.../pilot_*.log`.
 
 
 

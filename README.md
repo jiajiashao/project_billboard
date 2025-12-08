@@ -293,7 +293,3 @@ This repository assembles wrappers and helpers around the following open‑sourc
 
 We thank the respective authors and communities for making these resources available.
 
-Appendent
-----------------
-Output analysis from 69 runs across the data video clips and configurations:
-

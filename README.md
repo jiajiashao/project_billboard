@@ -100,14 +100,14 @@ Example: after a SAM‑2 GT baseline on `clip_corner`, look under `sam2/runs/*/<
  
 Interactive Report (Power BI Desktop)
 -------------------------------------
-- ⬇️ **[Download billboard_segmentation.pbix](appendent/billboard_segmentation.pbix)**  
+- ⬇️ **[Download billboard_segmentation.pbix](appendent/billboard_segmentation_report.pbix)**  
   Open with **Power BI Desktop** (Windows). No Pro license required.
 
-![Report preview](appendent/billboard_segmentation.png)
+![Report preview](appendent/billboard_segmentation_report.png)
 
 > Notes for viewers:
 > - If prompted about data sources, allow local file access. The report expects CSVs in this repo (see `appendent/summary.csv`).
-> - On macOS, Power BI Desktop isn’t available. Mac users can view the `appendent/billboard_segmentation.pdf` or the **overlay GIF/MP4s**.
+> - On macOS, Power BI Desktop isn’t available. Mac users can view the `appendent/billboard_segmentation_report.pdf` or the **overlay GIF/MP4s**.
   
 
 Known requirements / pitfalls

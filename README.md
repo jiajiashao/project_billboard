@@ -105,6 +105,8 @@ Interactive Report (Power BI Desktop)
 
 ![Report preview](appendent/billboard_segmentation_report.png)
 
+- 📄 **[View as PDF](appendent/billboard_segmentation_report.pdf)** (for quick browsing or macOS users)
+
 > Notes for viewers:
 > - If prompted about data sources, allow local file access. The report expects CSVs in this repo (see `appendent/summary.csv`).
 > - On macOS, Power BI Desktop isn’t available. Mac users can view the `appendent/billboard_segmentation_report.pdf` or the **overlay GIF/MP4s**.

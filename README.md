@@ -16,10 +16,11 @@ Workflow
 
 Clone & Setup
 -------------------
+```bash
 # clone & env
 git clone https://github.com/jiajiashao/project_billboard.git
 cd project_billboard/envs
-conda env create -f envs/environment.yml  
+conda env create -f envs/environment.yml
 conda activate sam2 
 
 # sanity: python and (optional) CUDA in THIS env
@@ -31,6 +32,7 @@ pip install --upgrade opencv-python-headless
 
 # ffmpeg present?
 ffmpeg -version
+```
 
 This repo contains eight entry-point pipelines (SAM-2 and XMem variants) plus supporting prompt/shot-detection tooling. Paths below are repo‑relative unless stated.
 
@@ -290,4 +292,3 @@ This repository assembles wrappers and helpers around the following open‑sourc
 - **timm (PyTorch Image Models)** — [huggingface/pytorch-image-models](https://github.com/huggingface/pytorch-image-models) — License: **Apache-2.0**.
 
 We thank the respective authors and communities for making these resources available.
-

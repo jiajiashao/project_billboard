@@ -19,7 +19,7 @@ Clone & Setup
 ```bash
 # clone & env
 git clone https://github.com/jiajiashao/project_billboard.git
-cd project_billboard/envs
+cd project_billboard
 conda env create -f envs/environment.yml
 conda activate sam2 
 

@@ -34,36 +34,6 @@ pip install --upgrade opencv-python-headless
 ffmpeg -version
 ```
 
-Quickstart
--------------------
-
-These minimal commands produce an overlay video and per‑shot seed JPGs on any MP4 (no GT required). Replace `clip_corner` with your own clip ID and ensure the MP4 exists under the expected `data/clips/` folder for the chosen runner.
-
-1) SAM‑2 + Moondream (no GT needed; overlays + seed snapshots)
-   `python sam2/sam2_moondream/main.py`
-     - `--clips clip_corner`
-     - `--prompts "perimeter billboard; sideline banner"`
-     - `--data-root sam2/data`
-     - `--auto-prompt`
-     - `--device cuda`
-
-2) SAM‑2 + OWL‑ViT (alternative auto‑prompter)
-  `python sam2/sam2_owlvit/main.py`
-    - `--clips clip_corner`
-    - `--prompts "perimeter billboard; stadium advertising board"`
-    - `--data-root sam2/data`
-    - `--auto-prompt`
-    - `--device cuda`
-
-3) XMem + YOLO11 (CUDA required; 'run-only' skips metrics)
-  `cd xmem/xmem_yolo11`
-  `python main_yolo.py`
-    - `--clip clip_corner`
-    - `--root ./../`
-    - `--auto-prompt`
-    - `--run-only`
-    - `--device cuda`
-
 This repo contains eight entry-point pipelines (SAM-2 and XMem variants) plus supporting prompt/shot-detection tooling. Paths below are repo‑relative unless stated.
 
 Environments
@@ -108,6 +78,37 @@ Please download the XMem checkpoint from [Google Drive](https://drive.google.com
 We provide the YOLO11n checkpoints finetuned on our dataset. 
   - `project_billboard/sam2/sam2_yolo11/weights/best.pt`
   - `project_billboard/xmem/xmem_yolo11/weights/best.pt`
+
+
+Quickstart
+-------------------
+
+These minimal commands produce an overlay video and per‑shot seed JPGs on any MP4 (no GT required). Replace `clip_corner` with your own clip ID and ensure the MP4 exists under the expected `data/clips/` folder for the chosen runner.
+
+1) SAM‑2 + Moondream (no GT needed; overlays + seed snapshots)
+   `python sam2/sam2_moondream/main.py`
+     - `--clips clip_corner`
+     - `--prompts "perimeter billboard; sideline banner"`
+     - `--data-root sam2/data`
+     - `--auto-prompt`
+     - `--device cuda`
+
+2) SAM‑2 + OWL‑ViT (alternative auto‑prompter)
+  `python sam2/sam2_owlvit/main.py`
+    - `--clips clip_corner`
+    - `--prompts "perimeter billboard; stadium advertising board"`
+    - `--data-root sam2/data`
+    - `--auto-prompt`
+    - `--device cuda`
+
+3) XMem + YOLO11 (CUDA required; 'run-only' skips metrics)
+  `cd xmem/xmem_yolo11`
+  `python main_yolo.py`
+    - `--clip clip_corner`
+    - `--root ./../`
+    - `--auto-prompt`
+    - `--run-only`
+    - `--device cuda`
 
 Outputs
 -------
